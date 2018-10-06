@@ -1,0 +1,4 @@
+-lib heaps
+-js mcs.js
+-main Main
+-D windowSize=731x411 resourcesPath=./res
