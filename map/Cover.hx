@@ -25,4 +25,9 @@ class Cover extends h3d.scene.Object {
         slots.push(new Slot(0, size.y * 0.5 + 1.5 * Map.UNITS_PER_METER, 0, this));
         slots.push(new Slot(0, size.y * -0.5 - 1 * Map.UNITS_PER_METER, 0, this));
     }
+
+    public function getSlot(dir:hxd.Direction, ?global:Bool = true):h3d.Vector {
+        var slot:Slot = (dir == hxd.Direction.Up ? slots[0] : slots[1]);
+        return global ? slot.localToGlobal() : new h3d.Vector(x,y,z);
+    }
 }

@@ -9,7 +9,8 @@ class Map extends h3d.scene.Object {
 
     var generator:Generator;
     var floors:Array<Floor>; 
-    var covers:Array<CoverLine>;   
+    var covers:Array<CoverLine>;
+    var player:Player;
 
     public function new(?mapName:String = "Default map", ?parent : h3d.scene.Object) {
         super(parent);        
@@ -20,6 +21,9 @@ class Map extends h3d.scene.Object {
 
         generator = new Generator(this);
         generator.generate();    
+
+        player = new Player(this);
+        player.goToCover(covers[0].getCover(0), true);
     }
 
     public function regen() {

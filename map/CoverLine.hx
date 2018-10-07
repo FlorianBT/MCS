@@ -14,4 +14,8 @@ class CoverLine extends h3d.scene.Object {
     public function addCover(cover:Cover) {
         covers.push(cover);
     }
+
+    public inline function getCover(index:Int) {
+        return covers[index];
+    }
 }
