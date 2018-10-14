@@ -1,5 +1,6 @@
 import h3d.col.*;
 import map.Generator;
+import properties.Properties;
 
 class Main extends hxd.App {
     var map:map.Map;
@@ -38,6 +39,7 @@ class Main extends hxd.App {
 
 	static function main() {
         hxd.Res.initEmbed();
+        Properties.load();
 		new Main();
 	}
 
