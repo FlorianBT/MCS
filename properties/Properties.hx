@@ -37,4 +37,8 @@ class Properties {
             properties.add(lineData[0], lineData[1]);
         }
     }
+
+    public static function get<T>(key:String):T {
+        return properties.get(key);
+    }
 }

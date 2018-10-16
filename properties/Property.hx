@@ -1,14 +1,15 @@
 package properties;
 
 class Property {
-    var value:Any;
+    public var value(default,null):Any;
 
     public function new(str:String) {
         parse(str);
     }
 
     function parse(str:String):Void {
-        if(StringTools.trim(str).length <= 0) {
+        str = StringTools.trim(str);
+        if(str.length <= 0) {
             value = null;
             trace("Parsing empty property - set to null");
             return;
@@ -21,7 +22,8 @@ class Property {
         else if(StringTools.startsWith(str, "[")
             && StringTools.endsWith(str, "]")) 
         {
-            var values:Array<String> = str.split(",");
+            str = str.substring(1, str.length - 1); //remove surrounding []
+            var values:Array<String> = str.split(","); //split values
             switch(values.length) {
                 case 0: 
                 {
