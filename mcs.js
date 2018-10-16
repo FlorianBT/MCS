@@ -1923,25 +1923,6 @@ Lambda.array = function(it) {
 	}
 	return a;
 };
-Lambda.count = function(it,pred) {
-	var n = 0;
-	if(pred == null) {
-		var _ = $getIterator(it);
-		while(_.hasNext()) {
-			var _1 = _.next();
-			++n;
-		}
-	} else {
-		var x = $getIterator(it);
-		while(x.hasNext()) {
-			var x1 = x.next();
-			if(pred(x1)) {
-				++n;
-			}
-		}
-	}
-	return n;
-};
 var h3d_IDrawable = function() { };
 $hxClasses["h3d.IDrawable"] = h3d_IDrawable;
 h3d_IDrawable.__name__ = "h3d.IDrawable";
@@ -33770,9 +33751,6 @@ haxe_ds_StringMap.prototype = {
 		}
 		return out;
 	}
-	,iterator: function() {
-		return new haxe_ds__$StringMap_StringMapIterator(this,this.arrayKeys());
-	}
 	,__class__: haxe_ds_StringMap
 };
 var haxe_ds__$Vector_Vector_$Impl_$ = {};
@@ -54115,7 +54093,7 @@ properties_Properties.load = function() {
 	var content = properties_Properties.res.entry.getText();
 	if(content != null) {
 		properties_Properties.parse(content,true);
-		haxe_Log.trace("Loaded " + properties_Properties.properties.get_count() + " properties",{ fileName : "properties/Properties.hx", lineNumber : 19, className : "properties.Properties", methodName : "load"});
+		haxe_Log.trace("Loaded " + properties_Properties.properties.count + " properties",{ fileName : "properties/Properties.hx", lineNumber : 19, className : "properties.Properties", methodName : "load"});
 	}
 };
 properties_Properties.parse = function(content,clear) {
@@ -54145,6 +54123,9 @@ properties_Properties.parse = function(content,clear) {
 		properties_Properties.properties.add(lineData[0],lineData[1]);
 	}
 };
+properties_Properties.get = function(key) {
+	return properties_Properties.properties.get(key);
+};
 var properties_Property = function(str) {
 	this.parse(str);
 };
@@ -54152,19 +54133,21 @@ $hxClasses["properties.Property"] = properties_Property;
 properties_Property.__name__ = "properties.Property";
 properties_Property.prototype = {
 	parse: function(str) {
-		if(StringTools.trim(str).length <= 0) {
+		str = StringTools.trim(str);
+		if(str.length <= 0) {
 			this.value = null;
-			haxe_Log.trace("Parsing empty property - set to null",{ fileName : "properties/Property.hx", lineNumber : 13, className : "properties.Property", methodName : "parse"});
+			haxe_Log.trace("Parsing empty property - set to null",{ fileName : "properties/Property.hx", lineNumber : 14, className : "properties.Property", methodName : "parse"});
 			return;
 		}
 		if(StringTools.startsWith(str,"#")) {
 			this.parse("0x" + HxOverrides.substr(str,1,null));
 		} else if(StringTools.startsWith(str,"[") && StringTools.endsWith(str,"]")) {
+			str = str.substring(1,str.length - 1);
 			var values = str.split(",");
 			switch(values.length) {
 			case 0:
 				this.value = null;
-				haxe_Log.trace("Parsing invalid property (" + str + ")- set to null",{ fileName : "properties/Property.hx", lineNumber : 29, className : "properties.Property", methodName : "parse"});
+				haxe_Log.trace("Parsing invalid property (" + str + ")- set to null",{ fileName : "properties/Property.hx", lineNumber : 31, className : "properties.Property", methodName : "parse"});
 				break;
 			case 1:
 				this.parse(values[0]);
@@ -54210,20 +54193,24 @@ var properties_PropertySet = function() {
 $hxClasses["properties.PropertySet"] = properties_PropertySet;
 properties_PropertySet.__name__ = "properties.PropertySet";
 properties_PropertySet.prototype = {
-	get_count: function() {
-		if(this.data != null) {
-			return Lambda.count(this.data);
-		} else {
-			return 0;
-		}
-	}
-	,clear: function() {
+	clear: function() {
 		this.data = new haxe_ds_StringMap();
+		this.count = 0;
 	}
 	,add: function(key,value) {
+		key = StringTools.trim(key);
+		value = StringTools.trim(value);
+		if(key.length <= 0) {
+			haxe_Log.trace("Invalid empty key used for property",{ fileName : "properties/PropertySet.hx", lineNumber : 23, className : "properties.PropertySet", methodName : "add"});
+			return;
+		}
+		if(value.length <= 0) {
+			haxe_Log.trace("No value specified for property <" + key + ">",{ fileName : "properties/PropertySet.hx", lineNumber : 27, className : "properties.PropertySet", methodName : "add"});
+			return;
+		}
 		var _this = this.data;
 		if(__map_reserved[key] != null ? _this.existsReserved(key) : _this.h.hasOwnProperty(key)) {
-			haxe_Log.trace("Property <" + key + "> already exists.",{ fileName : "properties/PropertySet.hx", lineNumber : 21, className : "properties.PropertySet", methodName : "add"});
+			haxe_Log.trace("Property <" + key + "> already exists.",{ fileName : "properties/PropertySet.hx", lineNumber : 31, className : "properties.PropertySet", methodName : "add"});
 			return;
 		}
 		var this1 = this.data;
@@ -54234,16 +54221,29 @@ properties_PropertySet.prototype = {
 		} else {
 			_this1.h[key] = value1;
 		}
-		haxe_Log.trace("Added property <" + key + " => " + value + ">",{ fileName : "properties/PropertySet.hx", lineNumber : 25, className : "properties.PropertySet", methodName : "add"});
+		this.count++;
+		haxe_Log.trace("Added property <" + key + " => " + value + ">",{ fileName : "properties/PropertySet.hx", lineNumber : 36, className : "properties.PropertySet", methodName : "add"});
 	}
-	,get: function(key) {
+	,getProperty: function(key) {
 		var _this = this.data;
 		if(!(__map_reserved[key] != null ? _this.existsReserved(key) : _this.h.hasOwnProperty(key))) {
-			haxe_Log.trace("Cannot find property <" + key + ">",{ fileName : "properties/PropertySet.hx", lineNumber : 30, className : "properties.PropertySet", methodName : "get"});
+			haxe_Log.trace("Cannot find property <" + key + ">",{ fileName : "properties/PropertySet.hx", lineNumber : 41, className : "properties.PropertySet", methodName : "getProperty"});
 			return null;
 		}
 		var _this1 = this.data;
-		return __map_reserved[key] != null ? _this1.getReserved(key) : _this1.h[key];
+		if(__map_reserved[key] != null) {
+			return _this1.getReserved(key);
+		} else {
+			return _this1.h[key];
+		}
+	}
+	,get: function(key) {
+		var prop = this.getProperty(key);
+		if(prop != null) {
+			return prop.value;
+		} else {
+			return null;
+		}
 	}
 	,__class__: properties_PropertySet
 };
