@@ -1,15 +1,17 @@
 package map;
 
-class Cover extends h3d.scene.Object {
-    public static inline var MIN_WIDTH:Float = 8 * Map.UNITS_PER_METER; //TODO properties
-    public static inline var MIN_HEIGHT:Float = 1 * Map.UNITS_PER_METER; //TODO properties
-    public static inline var MIN_DEPTH:Float = 0.8 * Map.UNITS_PER_METER; //TODO properties
+import properties.Properties;
 
+class Cover extends h3d.scene.Object {
     var slots:Array<Slot>;
     var coverMesh:h3d.scene.Mesh;
+    var minSize:h3d.col.Point;
 
     public function new(size:h3d.Vector, color:Int, parent:CoverLine) {
         super(parent);
+
+        minSize = Properties.get("coverMinSize").clone();
+        minSize.scale(Map.UNITS_PER_METER);
 
         var prim:h3d.prim.Cube = new h3d.prim.Cube(size.x, size.y, size.z, false);
         prim.unindex();

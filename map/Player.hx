@@ -1,18 +1,21 @@
 package map;
 
-class Player extends h3d.scene.Object {
-    static inline var WIDTH:Float = 0.8 * Map.UNITS_PER_METER; //TODO properties
-    static inline var HEIGHT:Float = 1.8 * Map.UNITS_PER_METER; //TODO properties
-    static inline var COLOR:Int = 0x000000; //TODO properties
+import properties.Properties;
 
-    var radius:Float;
+class Player extends h3d.scene.Object {
+    var size(default,null):h2d.col.Point;
+    var color(default,null):Int;
+    var radius(default,null):Float;
 
     public function new(?parent:h3d.scene.Object) {
         super(parent);
 
-        radius = WIDTH * 0.5;
+        size = Properties.get("playerSize").clone().scale(Map.UNITS_PER_METER);
+        color = Properties.get("playerColor");
+        
+        radius = size.x * 0.5;
 
-        var prim:h3d.prim.Cylinder = new h3d.prim.Cylinder(16, radius, HEIGHT -radius);
+        var prim:h3d.prim.Cylinder = new h3d.prim.Cylinder(16, radius, size.y - radius);
         prim.addNormals();
         prim.addTCoords();
         
@@ -21,15 +24,15 @@ class Player extends h3d.scene.Object {
         sprim.addUVs();
 
         var s1:h3d.scene.Mesh = new h3d.scene.Mesh(sprim, this); 
-        s1.material.color.setColor(COLOR);      
+        s1.material.color.setColor(color);      
         var s2:h3d.scene.Mesh = new h3d.scene.Mesh(sprim, this);
-        s2.material.color.setColor(COLOR);        
+        s2.material.color.setColor(color);        
         var cylinder:h3d.scene.Mesh = new h3d.scene.Mesh(prim, this);
-        cylinder.material.color.setColor(COLOR);
+        cylinder.material.color.setColor(color);
 
         s1.setPosition(0,0, radius * 0.5);
         cylinder.setPosition(s1.x, s1.y, s1.z);
-        s2.setPosition(s1.x, s1.y, cylinder.z + HEIGHT - radius); 
+        s2.setPosition(s1.x, s1.y, cylinder.z + size.y - radius); 
     }
 
     private function setPositionV(pos:h3d.Vector) {
