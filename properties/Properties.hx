@@ -25,7 +25,15 @@ class Properties {
     }
 
     private static function loadFS():String {
-        return "";
+        try {
+            var fs:hxd.fs.LocalFileSystem = new hxd.fs.LocalFileSystem($v{"res"});
+            var file:hxd.fs.FileEntry = fs.get("game.properties");
+            var content:String = file.getText();
+            return content;
+        } catch (e:hxd.fs.NotFound) {
+            trace("Properties file not found @" + e.path);
+            return "";
+        }
     }
 
     private static function parse(content:String, ?clear:Bool = false):Void {

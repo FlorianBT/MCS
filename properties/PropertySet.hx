@@ -1,6 +1,5 @@
 package properties;
 
-import js.html.TableCaptionElement;
 import haxe.ds.Map;
 
 class PropertySet {
@@ -47,6 +46,7 @@ class PropertySet {
     
     public function get<T>(key:String): T {
         var prop:Property = getProperty(key);
-        return (prop != null ? (prop.value : T) : null);
+        var res:T = (prop != null ? (prop.value : T) : null);
+        return res;
     }
 }

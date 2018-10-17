@@ -88,23 +88,38 @@ class Property {
 
         var invalid:Bool = false;
 
-        var arrayBool:Array<Bool> = values.map(parseBool);
-        invalid = Lambda.exists(arrayBool, function(b:Bool):Bool {
+        var arrayBool:Array<Null<Bool>> = values.map(parseBool);
+        invalid = Lambda.exists(arrayBool, function(b:Null<Bool>):Bool {
             return b == null;
         });
-        if(!invalid) return arrayBool;
+        if(!invalid) {
+            var res:Array<Bool> = arrayBool.map(function(v:Null<Bool>):Bool {
+                return cast(v, Bool);
+            });
+            return res;
+        }
 
-        var arrayFloat:Array<Float> = values.map(parseFloat);
-        invalid = Lambda.exists(arrayFloat, function(f:Float):Bool {
+        var arrayFloat:Array<Null<Float>> = values.map(parseFloat);
+        invalid = Lambda.exists(arrayFloat, function(f:Null<Float>):Bool {
             return f == null || Math.isNaN(f);
         });
-        if(!invalid) return arrayFloat;
+        if(!invalid) {
+            var res:Array<Float> = arrayFloat.map(function(v:Null<Float>):Float {
+                return cast(v, Float);
+            });
+            return res;
+        }
 
-        var arrayInt:Array<Int> = values.map(parseInt);
-        invalid = Lambda.exists(arrayInt, function(i:Int):Bool {
+        var arrayInt:Array<Null<Int>> = values.map(parseInt);
+        invalid = Lambda.exists(arrayInt, function(i:Null<Int>):Bool {
             return i == null;
         });
-        if(!invalid) return arrayInt;
+        if(!invalid) {
+            var res:Array<Int> = arrayInt.map(function(v:Null<Int>):Int {
+                return cast(v, Int);
+            });
+            return res;
+        }
 
         trace("Invalid property list (" + str + ") - could not resolve elements type, set to null");
         return null;
@@ -117,26 +132,26 @@ class Property {
             return null;
         }
 
-        var boolVal:Bool = parseBool(str);
+        var boolVal:Null<Bool> = parseBool(str);
         if(boolVal != null) {
-            return boolVal;
+            return (boolVal : Bool);
         }
 
-        var floatVal:Float = parseFloat(str);
+        var floatVal:Null<Float> = parseFloat(str);
         if(floatVal != null && !Math.isNaN(floatVal)) {
-            return floatVal;
+            return (floatVal : Float);
         }
 
-        var intVal:Int = parseInt(str);
+        var intVal:Null<Int> = parseInt(str);
         if(intVal != null) {
-            return intVal;
+            return (intVal : Int);
         }
 
         trace("Invalid property (" + str + ") - set to null");
         return null;
     }
 
-    function parseBool(str:String):Bool {
+    function parseBool(str:String):Null<Bool> {
         str = StringTools.trim(str);
         if(str.length <= 0) {
             trace("Parsing empty property - set to null");
@@ -151,7 +166,7 @@ class Property {
         return null;
     }
 
-    function parseInt(str:String):Int {
+    function parseInt(str:String):Null<Int> {
         str = StringTools.trim(str);
         if(str.length <= 0) {
             trace("Parsing empty property - set to null");
@@ -164,7 +179,7 @@ class Property {
         return Std.parseInt(str);
     }
 
-     function parseFloat(str:String):Float {
+     function parseFloat(str:String):Null<Float> {
         str = StringTools.trim(str);
         if(str.length <= 0) {
             trace("Parsing empty property - set to null");
