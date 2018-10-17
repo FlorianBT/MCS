@@ -39,7 +39,7 @@ class Main extends hxd.App {
 
 	static function main() {
         hxd.Res.initEmbed();
-        Properties.load(false);
+        Properties.load(#if hl false #end);
 		new Main();
 	}
 

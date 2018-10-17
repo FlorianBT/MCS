@@ -1,6 +1,6 @@
 -lib heaps
--lib hlsdl
-#-js mcs.js
--hl mcs.hl
+#-lib hlsdl
+-js mcs.js
+#-hl mcs.hl
 -main Main
 -D windowSize=411x731 resourcesPath=./res
