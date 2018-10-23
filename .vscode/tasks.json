@@ -16,6 +16,22 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Pack game",
+            "type": "shell",
+            "command": "./scripts/pack.sh",
+            "windows": {
+                "command": ".\\scripts\\pack.cmd"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
         }
     ]
 }
